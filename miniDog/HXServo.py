@@ -95,13 +95,12 @@ class HXServo :
 		for i in range(0, len(buff)):
 			sendData += chr(buff[i])
 		self.serialPort.write(sendData)
-		
 		#receive data
 		receivedData = []
 		tailReceived = False
 		headerReceived = False
 		while not(tailReceived and headerReceived):
-			temp = self.serialPort.read(20)	#read a long enough data stream
+			temp = self.serialPort.read(13)	#read a long enough data stream
 			self.serialPort.flushInput()
 			for i in range(0, len(temp)-1):
 				if headerReceived:
@@ -177,8 +176,8 @@ class HXServo :
 		tailReceived = False
 		headerReceived = False
 		while not(tailReceived and headerReceived):
-			temp = self.serialPort.read(20)	#read a long enough data stream
-			self.serialPort.flushInput()
+			temp = self.serialPort.read(14)	#read a long enough data stream
+			#self.serialPort.flushInput()
 			for i in range(0, len(temp)-1):
 				if headerReceived:
 					receivedData.append(ord(temp[i]))
@@ -282,10 +281,10 @@ class HXServo :
 if __name__ == '__main__':
 	ser = serial.Serial('/dev/ttyAMA0', 115200, timeout = 0.5)
 	servo = HXServo(ser)
-#	id = 6
+	id = 6
 #	print "Read testing..."
 #	servo.setWorkingMode(id, 1)
-#	print "BaudRate:", servo.getBaudRate(id)
+	print "BaudRate:", servo.getBaudRate(id)
 #	print "Position:", servo.getPosition(id)
 #	print "Speed:", servo.getSpeed(id)
 #	print "CurrentPostion:", servo.getCurrentPosition(id)
