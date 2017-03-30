@@ -12,8 +12,8 @@ class dogPlatform:
 		self.legTcp = np.zeros((4,4))		#record four legPose(x,y,z,1)
 		self.legPose = np.zeros((4,3))		#record four legs' joins
 		#dimensiton parameters
-		self.width = 200
-		self.height = 250
+		self.width = 100
+		self.height = 165
 		#leg order: front_left, front_right, rear_left, rear_right
 		self.legFix = np.array([[-self.width / 2., self.height / 2., 0, 1],\
 					[self.width / 2., self.height / 2., 0, 1],\
@@ -32,22 +32,12 @@ class dogPlatform:
 		'''Calculate leg joints from Tcp'''
 		for i in range(0,4):
 			dis = self.legFix[i] - self.legTcp[i]
-			joint_0 = np.arctan(dis[0] / dis[2]) * 180 / np.pi
-			dx = np.sqrt(dis[0]**2 + dis[2]**2)
-			theta = np.arctan(-dis[1] / dx) * 180 / np.pi		#angle of line(fix-tcp) and xoz plane
-			l1 = np.linalg.norm(self.legUpper[i])
-			l2 = np.linalg.norm(self.legLow[i])
-			l3 = np.linalg.norm(self.legFix[i] - self.legTcp[i])	#triangle of leg
-			joint_1 = np.arccos((l1**2 - l2**2 + l3**2) / (2 * l1 * l3)) * 180 / np.pi
-			joint_1 = theta - joint_1
-			if l3 > (l1 + l2):
-				return
-			joint_2 = np.arccos((l3**2 - l1**2 - l2**2) / (2 * l1 * l2)) * 180 / np.pi
-			if joint_0 > 90 or joint_1 < -90 or joint_2 < 0 or joint_2 > 180:
-				return
-			self.legPose[i][0] = joint_0
-			self.legPose[i][1] = joint_1
-			self.legPose[i][2] = joint_2
+			legLength = np.sqrt(dis[0]**2 + dis[1]**2 + dis[2]**2)
+			joint_0 = np.degrees(-np.arcsin(dis[1] / legLength))
+			joint_1 = np.degrees((110 - legLength) / 22.5)
+			self.legPose[i][0] = 0
+			self.legPose[i][1] = joint_0
+			self.legPose[i][2] = joint_1
 
 	def forwardKinematics(self):
 		'''Calculate leg Tcp from joints'''
